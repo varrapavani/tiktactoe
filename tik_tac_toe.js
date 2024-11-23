@@ -2,41 +2,127 @@ console.log('...........WELCOME..........');
 console.log('.......TIK TAC TOE......');
 const player1 = prompt('enter PLAYER-1 name : ');
 const player2 = prompt('enter PLAYER-2 name : ');
-const string = '0492357816';
+console.log('lets play game ');
+let player1Set = '';
+let player2Set = '';
 
-function getSymbol(player) {
-  return player === player1 ? '❌' : '⭕️';
+function showStatus(player) {
+  console.log('congratulations ' + player);
 }
 
-function getBoard(player, playerCell) {
-  let board = '';
-  let number = '';
-  const horizontal = '-------------';
-  for (let i = 1; i < 10; i++) {
-    if (player !== '') {
-      
-      if (i === playerCell) {
-        number = getSymbol(player);
-      } else {
-        number = string[i];
+function isSubsetOf(union) {
+  if (isSubset(union, '123')) {
+    return true;
+  }
+  if (isSubset(union, '456')) {
+    return true;
+  }
+  if (isSubset(union, '789')) {
+    return true;
+  }
+  if (isSubset(union, '159')) {
+    return true;
+  }
+  if (isSubset(union, '357')) {
+    return true;
+  }
+  if (isSubset(union, '147')) {
+    return true;
+  }
+  if (isSubset(union, '258')) {
+    return true;
+  }
+  if (isSubset(union, '369')) {
+    return true;
+  }
+  return false;
+}
+
+function isSubset(set1, set2) {
+  let count = 0;
+  for (let index2 = 0; index2 < set2.length; index2++) {
+    for (let index1 = 0; index1 < set1.length; index1++) {
+      if (set2[index2] === set1[index1]) {
+        count = count + 1;
       }
-    } else {
-      number =  string[i];
-    }
-    board += '| ' + number + ' ';
-    if (i % 3 === 0) {
-      board += '|\n' + horizontal + '\n';
     }
   }
-  return horizontal + '\n' + board;
+  if (count === 3) {
+    return true;
+  }
+  return false;
 }
 
-function startGame() {
-  console.log('lets play game ');
-  console.log(getBoard('', 'firstTable'));
-  const player1Cell = +prompt('enter cell number');
-  console.log(player1Cell);
-  console.log(getBoard(player1, player1Cell));
+function getUnion(set1, set2) {
+  let set2Candidate = '';
+  let set1Can = set1 + '';
+  for (let index2 = 0; index2 < set2.length; index2++) {
+    for (let index1 = 0; index1 < set1Can.length; index1++) {
+      if (set2[index2] === set1Can[index1]) {
+        break;
+      }
+      if (index1 === set1Can.length - 1) {
+        set2Candidate += set2[index2];
+      }
+    }
+  }
+  return set1Can + set2Candidate;
 }
-startGame();
 
+function isValidInput(userInput) {
+  if (isNaN(userInput)) {
+    return false;
+  }
+  const string = getUnion(player1Set, player2Set);
+  for (let i = 0; i < string.length; i++) {
+    if (userInput + '' === string[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function takeUserInput(player) {
+  const userInput = +prompt(player + '\nenter  number');
+
+  if (!isValidInput(userInput)) {
+    console.log('Invalid Input \n please enter correct number ');
+    return takeUserInput(player);
+  }
+  return userInput;
+}
+
+function playGame(player, playerSet) {
+  const userCell = takeUserInput(player);
+  const union = getUnion(userCell , playerSet);
+  const subset = isSubsetOf(union);
+  if (player === player1) {
+    player1Set = union;
+  } else {
+    player2Set = union;
+  }
+  return subset;
+}
+
+function start() {
+  let chances = 9;
+  let currentPlayer = player1;
+  let playerSet = player1Set;
+  while (chances !== 0) {
+    const isGameOver = playGame(currentPlayer, playerSet);
+    if (isGameOver) {
+      chances = 0;
+      showStatus(currentPlayer);
+      break;
+    }
+    if (currentPlayer === player1) {
+      currentPlayer = player2;
+      playerSet = player2Set;
+    } else {
+      currentPlayer = player1;
+      playerSet = player1Set;
+    }
+    chances = chances - 1;
+  }
+}
+start();
