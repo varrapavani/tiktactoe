@@ -55,25 +55,25 @@ function isSubset(set1, set2) {
 
 function getUnion(set1, set2) {
   let set2Candidate = '';
-  let set1Can = set1 + '';
+  let set1Candidate = set1 + '';
   for (let index2 = 0; index2 < set2.length; index2++) {
-    for (let index1 = 0; index1 < set1Can.length; index1++) {
-      if (set2[index2] === set1Can[index1]) {
+    for (let index1 = 0; index1 < set1Candidate.length; index1++) {
+      if (set2[index2] === set1Candidate[index1]) {
         break;
       }
-      if (index1 === set1Can.length - 1) {
+      if (index1 === set1Candidate.length - 1) {
         set2Candidate += set2[index2];
       }
     }
   }
-  return set1Can + set2Candidate;
+  return set1Candidate + set2Candidate;
 }
 
 function isValidInput(userInput) {
-  if (isNaN(userInput)) {
+  if (isNaN(userInput) || userInput === 0) {
     return false;
   }
-  const string = getUnion(player1Set, player2Set);
+  const string = player1Set + player2Set;
   for (let i = 0; i < string.length; i++) {
     if (userInput + '' === string[i]) {
       return false;
@@ -111,7 +111,6 @@ function start() {
   while (chances !== 0) {
     const isGameOver = playGame(currentPlayer, playerSet);
     if (isGameOver) {
-      chances = 0;
       showStatus(currentPlayer);
       break;
     }
@@ -123,6 +122,9 @@ function start() {
       playerSet = player1Set;
     }
     chances = chances - 1;
+  }
+  if(chances === 0) {
+    console.log('Game TIE');
   }
 }
 start();
