@@ -5,28 +5,27 @@ const player2 = prompt('enter PLAYER-2 name : ');
 console.log('lets play game ');
 let player1Set = '';
 let player2Set = '';
+let boxString = '         ';
 
 function showStatus(player) {
   console.log('congratulations ' + player);
 }
-let boxString = 'xooxxxoox';
-console.log(boxString.length);
 
-function getSymbol(i) {
-  if (boxString[i] === ' ') {
+function getSymbol(i, box) {
+  if (box[i] === ' ') {
     return '0' + (i + 1);
   }
-  if (boxString[i] === 'x') {
+  if (box[i] === 'x') {
     return '❌';
   }
   return '⭕️';     
 }
 
-function getBoard(boxString) {
+function getBoard(box) {
   let board = '';
   const horizontal = '----------------';
   for (let i = 1; i < 10; i++) {
-    const number = getSymbol(i - 1);
+    const number = getSymbol(i - 1, box);
     board += '| ' + number + ' ';
     if (i % 3 === 0) {
       board += '|\n' + horizontal + '\n';
@@ -36,7 +35,21 @@ function getBoard(boxString) {
   return horizontal + '\n' + board;
 }
 
-console.log(getBoard(boxString));
+
+function getBoxString(userCell, player){
+  let string = '';
+  let character = '';
+  for (let i = 0; i < boxString.length ; i++) {
+    character =  boxString[i];
+    if (i === userCell - 1) {
+      character = player === player1? 'x' : 'o';
+    }
+    string +=  character;
+  }
+  boxString = string;
+  return boxString;
+}
+
 
 function isSubsetOf(union) {
   if (isSubset(union, '123')) {
@@ -107,7 +120,6 @@ function isValidInput(userInput) {
       return false;
     }
   }
-  console.log(getBoard(string));
   return true;
 }
 
@@ -123,6 +135,8 @@ function takeUserInput(player) {
 
 function playGame(player, playerSet) {
   const userCell = takeUserInput(player);
+  const box = getBoxString(userCell, player);
+  console.log(getBoard(box));
   const union = getUnion(userCell , playerSet);
   const subset = isSubsetOf(union);
   if (player === player1) {
