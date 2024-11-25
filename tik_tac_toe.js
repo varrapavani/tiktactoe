@@ -50,31 +50,24 @@ function getBoxString(userCell, player){
   return boxString;
 }
 
+function winningSubsets(n) {
+  switch(n) {
+    case 0: return "123";
+    case 1: return "456";
+    case 2: return "789";
+    case 3: return "147";
+    case 4: return "258";
+    case 5: return "369";
+    case 6: return "159";
+    case 7: return "357";
+  }
+}
 
 function isSubsetOf(union) {
-  if (isSubset(union, '123')) {
-    return true;
-  }
-  if (isSubset(union, '456')) {
-    return true;
-  }
-  if (isSubset(union, '789')) {
-    return true;
-  }
-  if (isSubset(union, '159')) {
-    return true;
-  }
-  if (isSubset(union, '357')) {
-    return true;
-  }
-  if (isSubset(union, '147')) {
-    return true;
-  }
-  if (isSubset(union, '258')) {
-    return true;
-  }
-  if (isSubset(union, '369')) {
-    return true;
+  for(let i = 0; i < 8;i++) {
+    if(isSubset(union,winningSubsets(i))) {
+      return true;
+    }
   }
   return false;
 }
@@ -96,31 +89,24 @@ function isSubset(set1, set2) {
 
 function getUnion(set1, set2) {
   let set2Candidate = '';
-  let set1Candidate = set1 + '';
   for (let index2 = 0; index2 < set2.length; index2++) {
-    for (let index1 = 0; index1 < set1Candidate.length; index1++) {
-      if (set2[index2] === set1Candidate[index1]) {
+    for (let index1 = 0; index1 < set1.length; index1++) {
+      if (set2[index2] === set1[index1]) {
         break;
       }
-      if (index1 === set1Candidate.length - 1) {
+      if (index1 === set1.length - 1) {
         set2Candidate += set2[index2];
       }
     }
   }
-  return set1Candidate + set2Candidate;
+  return set1 + set2Candidate;
 }
 
 function isValidInput(userInput) {
-  if (isNaN(userInput) || userInput === 0) {
-    return false;
-  }
-  const string = player1Set + player2Set;
-  for (let i = 0; i < string.length; i++) {
-    if (userInput + '' === string[i]) {
-      return false;
-    }
-  }
+  if (userInput > 0 && userInput < 10){
   return true;
+  }
+  return false;
 }
 
 function takeUserInput(player) {
@@ -134,7 +120,7 @@ function takeUserInput(player) {
 }
 
 function playGame(player, playerSet) {
-  const userCell = takeUserInput(player);
+  const userCell = takeUserInput(player) + '';
   const box = getBoxString(userCell, player);
   console.log(getBoard(box));
   const union = getUnion(userCell , playerSet);
@@ -150,19 +136,20 @@ function playGame(player, playerSet) {
 function start() {
   let chances = 9;
   let currentPlayer = player1;
-  let playerSet = player1Set;
+  let currentPlayerSet = player1Set;
+  console.log(getBoard(boxString));
   while (chances !== 0) {
-    const isGameOver = playGame(currentPlayer, playerSet);
+    const isGameOver = playGame(currentPlayer, currentPlayerSet);
     if (isGameOver) {
       showStatus(currentPlayer);
       break;
     }
     if (currentPlayer === player1) {
       currentPlayer = player2;
-      playerSet = player2Set;
+      currentPlayerSet = player2Set;
     } else {
       currentPlayer = player1;
-      playerSet = player1Set;
+      currentPlayerSet = player1Set;
     }
     chances = chances - 1;
   }
