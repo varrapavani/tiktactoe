@@ -13,12 +13,12 @@ function showStatus(player) {
 
 function getSymbol(i, box) {
   if (box[i] === ' ') {
-    return '0' + (i + 1);
+    return ' ' + (i + 1);
   }
   if (box[i] === 'x') {
     return '❌';
   }
-  return '⭕️';     
+  return '⭕️';
 }
 
 function getBoard(box) {
@@ -31,27 +31,25 @@ function getBoard(box) {
       board += '|\n' + horizontal + '\n';
     }
   }
- 
+
   return horizontal + '\n' + board;
 }
 
-
-function getBoxString(userCell, player){
+function getBoxString(userCell, player) {
   let string = '';
   let character = '';
-  for (let i = 0; i < boxString.length ; i++) {
-    character =  boxString[i];
+  for (let i = 0; i < boxString.length; i++) {
+    character = boxString[i];
     if (i === userCell - 1) {
-      character = player === player1? 'x' : 'o';
+      character = player === player1 ? 'x' : 'o';
     }
-    string +=  character;
+    string += character;
   }
-  boxString = string;
-  return boxString;
+  return string;
 }
 
 function winningSubsets(n) {
-  switch(n) {
+  switch (n) {
     case 0: return "123";
     case 1: return "456";
     case 2: return "789";
@@ -64,8 +62,8 @@ function winningSubsets(n) {
 }
 
 function isSubsetOf(union) {
-  for(let i = 0; i < 8;i++) {
-    if(isSubset(union,winningSubsets(i))) {
+  for (let i = 0; i < 8; i++) {
+    if (isSubset(union, winningSubsets(i))) {
       return true;
     }
   }
@@ -81,30 +79,14 @@ function isSubset(set1, set2) {
       }
     }
   }
-  if (count === 3) {
-    return true;
-  }
-  return false;
-}
 
-function getUnion(set1, set2) {
-  let set2Candidate = '';
-  for (let index2 = 0; index2 < set2.length; index2++) {
-    for (let index1 = 0; index1 < set1.length; index1++) {
-      if (set2[index2] === set1[index1]) {
-        break;
-      }
-      if (index1 === set1.length - 1) {
-        set2Candidate += set2[index2];
-      }
-    }
-  }
-  return set1 + set2Candidate;
+  return count === 3;
 }
 
 function isValidInput(userInput) {
-  if (userInput > 0 && userInput < 10){
-  return true;
+  if (userInput > 0 && userInput < 10) {
+    if (boxString[userInput - 1] === ' ')
+    return true;
   }
   return false;
 }
@@ -116,19 +98,21 @@ function takeUserInput(player) {
     console.log('Invalid Input \n please enter correct number ');
     return takeUserInput(player);
   }
+  boxString = getBoxString(userInput, player);
   return userInput;
 }
 
 function playGame(player, playerSet) {
-  const userCell = takeUserInput(player) + '';
-  const box = getBoxString(userCell, player);
-  console.log(getBoard(box));
-  const union = getUnion(userCell , playerSet);
-  const subset = isSubsetOf(union);
+  const userCell = takeUserInput(player);
+  
+  console.log(getBoard(boxString));
+  const set = playerSet + userCell;
+  const subset = isSubsetOf(set);
+
   if (player === player1) {
-    player1Set = union;
+    player1Set = set;
   } else {
-    player2Set = union;
+    player2Set = set;
   }
   return subset;
 }
@@ -137,25 +121,27 @@ function start() {
   let chances = 9;
   let currentPlayer = player1;
   let currentPlayerSet = player1Set;
+  let isFirstPlayer = true;
+
   console.log(getBoard(boxString));
   while (chances !== 0) {
     const isGameOver = playGame(currentPlayer, currentPlayerSet);
+
     if (isGameOver) {
       showStatus(currentPlayer);
       break;
     }
-    if (currentPlayer === player1) {
-      currentPlayer = player2;
-      currentPlayerSet = player2Set;
-    } else {
-      currentPlayer = player1;
-      currentPlayerSet = player1Set;
-    }
     chances = chances - 1;
+    isFirstPlayer = !isFirstPlayer;
+    currentPlayerSet = isFirstPlayer ? player1Set : player2Set;
+    currentPlayer = isFirstPlayer ? player1 : player2;
   }
-  if(chances === 0) {
+  if (chances === 0) {
     console.log('Game TIE');
   }
 }
 start();
 
+
+
+// moves - 5 2 3 1
