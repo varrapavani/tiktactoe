@@ -9,6 +9,34 @@ let player2Set = '';
 function showStatus(player) {
   console.log('congratulations ' + player);
 }
+let boxString = 'xooxxxoox';
+console.log(boxString.length);
+
+function getSymbol(i) {
+  if (boxString[i] === ' ') {
+    return '0' + (i + 1);
+  }
+  if (boxString[i] === 'x') {
+    return '❌';
+  }
+  return '⭕️';     
+}
+
+function getBoard(boxString) {
+  let board = '';
+  const horizontal = '----------------';
+  for (let i = 1; i < 10; i++) {
+    const number = getSymbol(i - 1);
+    board += '| ' + number + ' ';
+    if (i % 3 === 0) {
+      board += '|\n' + horizontal + '\n';
+    }
+  }
+ 
+  return horizontal + '\n' + board;
+}
+
+console.log(getBoard(boxString));
 
 function isSubsetOf(union) {
   if (isSubset(union, '123')) {
@@ -79,6 +107,7 @@ function isValidInput(userInput) {
       return false;
     }
   }
+  console.log(getBoard(string));
   return true;
 }
 
@@ -128,3 +157,4 @@ function start() {
   }
 }
 start();
+
