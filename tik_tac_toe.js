@@ -4,7 +4,8 @@ const player1 = prompt('enter PLAYER-1 name : ');
 const player2 = prompt('enter PLAYER-2 name : ');
 console.log('lets play game ');
 
-function showStatus(player) {
+function showStatus(currentPlayer) {
+  const player = currentPlayer === 0 ? player1 : player2;
   console.log('congratulations ' + player);
 }
 
@@ -45,7 +46,6 @@ function isSubset(set1, set2) {
   return count === 3;
 }
 
-
 function isSubsetOf(union) {
   const winningSubsets = ['123', '456', '789', '147', '258', '369', '159', '357'];
   for (let i = 0; i < 8; i++) {
@@ -67,7 +67,8 @@ function isValidInput(userInput, boxString) {
   return false;
 }
 
-function takeUserInput(player, boxString) {
+function takeUserInput(currentPlayer, boxString) {
+  const player = currentPlayer === 0 ? player1 : player2;
   const userInput = +prompt(player + '\nenter  number');
 
   if (!isValidInput(userInput, boxString)) {
@@ -78,25 +79,34 @@ function takeUserInput(player, boxString) {
   return userInput;
 }
 
+function getMoves(currentPlayer, player1Moves, player2Moves, userInput) {
+  const playerMoves = currentPlayer === 0 ? player1Moves : player2Moves;
+  return playerMoves + userInput;
+}
+
+function getCurrentPlayer(currentPlayer) {
+  return 1 - currentPlayer;
+}
+
 function start() {
   let chances = 9;
   let player1Moves = '';
   let player2Moves = '';
-  let currentPlayer = player1;
-  let isFirstPlayer = true;
+  let currentPlayer = 1;
   const boxString = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   console.log(getBoard(boxString));
 
   while (chances !== 0) {
+    currentPlayer = getCurrentPlayer(currentPlayer);
     const userInput = takeUserInput(currentPlayer, boxString);
-    boxString[userInput - 1] = isFirstPlayer ? 'x' : 'o';
+    boxString[userInput - 1] = currentPlayer === 0 ? 'x' : 'o';
 
     console.log(getBoard(boxString));
-    let moves = '';
-    if (isFirstPlayer) {
-      moves = player1Moves += userInput;
+    const moves = getMoves(currentPlayer, player1Moves, player2Moves, userInput);
+    if (currentPlayer === 0) {
+      player1Moves = getMoves(currentPlayer, player1Moves, player2Moves, userInput);
     } else {
-      moves = player2Moves += userInput;
+      player2Moves = getMoves(currentPlayer, player1Moves, player2Moves, userInput);
     }
 
     if (isSubsetOf(moves)) {
@@ -105,8 +115,6 @@ function start() {
     }
 
     chances = chances - 1;
-    isFirstPlayer = !isFirstPlayer;
-    currentPlayer = isFirstPlayer ? player1 : player2;
   }
 
   if (chances === 0) {
